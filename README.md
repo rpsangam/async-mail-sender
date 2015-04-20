@@ -1,23 +1,23 @@
 ### Overview:
 -------------
-Simple demonstration of how to build Async mail sender based on Spring Boot, Redis, MySQL which can process more than 400 mails/second. You can use this, customize it the best way it suits you.
+Simple demonstration of how to build Async mail sender based on Spring Boot, Redis, MySQL which can process more than 400 mails/second. You can use this, customize it - the best way it suits you.
 
 
 ### Pre-requisites:
 -------------------
-    * Redis is installed.
+    * Redis is installed (on your devbox).
     * MySQL is up and running.
-    * SMTP Server for testing - I use (https://nilhcem.github.io/FakeSMTP/)
+    * SMTP Server for testing - I use https://nilhcem.github.io/FakeSMTP/
 
 
-### Setup
+### Setup:
 ---------
 ```bash
 $ git glone <git-project-url>
 ```
 
 ```bash
-$ edit src/main/resources/application.properties, and set the values as per your environment.
+$ edit src/main/resources/*.properties, and set the values as per your environment.
 ```
 
 
@@ -50,6 +50,7 @@ Use Curl (or POSTman) to run REST APIs to test it.
 ### TODO:
 ---------
     * Add Support for distributed locking of records, so redundant nodes, don't pick up same records.
+    * Externalize Redis connection configuration
     * Unit testing.
     * Support for NoSQL (pretty easy)
     * Publish the benchmarking.
