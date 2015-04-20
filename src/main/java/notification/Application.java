@@ -11,7 +11,6 @@ import org.springframework.context.ApplicationContext;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-// @ComponentScan("notification")
 public class Application extends SpringBootServletInitializer {
 
 	private static final Logger LOGGER = LoggerFactory
@@ -26,6 +25,5 @@ public class Application extends SpringBootServletInitializer {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws InterruptedException {
 		ApplicationContext ctx = SpringApplication.run(Application.class, args);
-		// System.exit(0);
 	}
 }

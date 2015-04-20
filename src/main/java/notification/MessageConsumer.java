@@ -15,29 +15,27 @@ import notification.models.EmailMessage;
 
 @Component
 public class MessageConsumer {
-	private static final Logger LOGGER = LoggerFactory
+	private static final Logger logger = LoggerFactory
 			.getLogger(MessageConsumer.class);
 
 	@Autowired(required = true)
 	private JavaMailSender mailSender;
 
 	public void receiveMessage(EmailMessage mailMsg) {
-		LOGGER.info("!!!!!!Received <" + mailMsg + ">");
+		logger.info("Received Msg: " + mailMsg);
 		SimpleMailMessage smm = new SimpleMailMessage();
 		smm.setTo(mailMsg.getTo());
 		smm.setText(mailMsg.getBody());
 		smm.setFrom(mailMsg.getFrom());
 		smm.setSubject(mailMsg.getSubject());
-		LOGGER.info("Sending mail now.....");
+		logger.info("Sending mail now.....");
 		Future<Boolean> f = asyncSender(smm);
 		try {
 			boolean result = f.get();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error getting async result. Reason:", e);
 		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error sending email. Reason:", e);
 		}
 	}
 

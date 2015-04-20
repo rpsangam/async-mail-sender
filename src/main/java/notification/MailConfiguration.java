@@ -12,10 +12,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-//@SpringApplicationConfiguration(classes = {Application.class})
 @Configuration
-//@ComponentScan
-//@EnableAutoConfiguration
 @PropertySource("classpath:notification.properties")
 public class MailConfiguration {
 

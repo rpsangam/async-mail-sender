@@ -40,7 +40,20 @@ public class MailServiceImpl {
 	@Autowired
 	private RedisTemplate<String, EmailMessage> redisTemplate;
 
+
+	// TODO: Add pagination
+	@RequestMapping(method = RequestMethod.GET, value="/testdata")
+	public List<EmailMessage> getEmailTestData(
+			@RequestParam(value = "batchSize", required = false) int batchSize) {
+		Query q = em.createQuery(
+				" from EmailMessage em where em.status = 'NONE'",
+				EmailMessage.class);
+		List<EmailMessage> msgList = q.getResultList();
+		return msgList;
+	}
+
 	@RequestMapping(method = RequestMethod.PUT, value = "trigger")
+	@Transactional
 	public List<EmailMessage> triggerEmailJob(
 			@RequestParam(value = "batchSize", required = false) int batchSize) {
 		Query q = em.createQuery(
@@ -50,9 +63,10 @@ public class MailServiceImpl {
 
 		// Ideally lock the operation, so other load balancing node won't pick
 		// up same set of records.
-		publishEmailMessage(msgList.get(0));
+		logger.info("====== Triggering emails=======");
 		updateEmailMsgStatus(Status.QUEUED, msgList);
-		return msgList;
+		publishEmailMessage(msgList);
+		return new ArrayList<EmailMessage>();
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/testdata")
@@ -81,33 +95,31 @@ public class MailServiceImpl {
 	}
 
 	@Async
-	public void publishEmailMessage(EmailMessage msg) {
-		logger.info("Publishing msg");
+	private void publishEmailMessage(final EmailMessage msg) {
+		logger.info("Publishing msg: " + msg.getId());
 		redisTemplate.convertAndSend("mail", msg);
 	}
 
 	@Async
-	@Transactional
-	public void updateEmailMsgStatus(final Status status,
-			final List<EmailMessage> msgList) {
-		List<Integer> msgIds = getIds(msgList);
-		if (msgIds.isEmpty()) {
-			return;
+	private void publishEmailMessage(final List<EmailMessage> msgList) {
+		for(EmailMessage msg: msgList) {
+			publishEmailMessage(msg);
 		}
-		Query q = em
-				.createQuery("update EmailMessage set status = :status where id in (:ids)");
-		q.setParameter("status", status);
-		q.setParameter("ids",
-				StringUtils.collectionToCommaDelimitedString(msgIds));
-		int count = q.executeUpdate();
-		logger.info("Total updated: " + count);
 	}
 
-	public List<Integer> getIds(final List<EmailMessage> msgs) {
-		List<Integer> ids = new ArrayList<>();
-		for (EmailMessage msg : msgs) {
-			ids.add(msg.getId());
+	@Async
+	public void updateEmailMsgStatus(final Status status,
+			final List<EmailMessage> msgList) {
+		if (msgList.isEmpty()) {
+			return;
 		}
-		return ids;
+
+		Query q = em
+				.createQuery("update EmailMessage set status = :status where id between :start and :end");
+		q.setParameter("status", status);
+		q.setParameter("start", msgList.get(0).getId());
+		q.setParameter("end", msgList.get(msgList.size()-1).getId());
+		int count = q.executeUpdate();
+		logger.info("Total updated: " + count);
 	}
 }
