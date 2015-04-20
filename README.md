@@ -5,9 +5,9 @@ Simple demonstration of how to build Async mail sender based on Spring Boot, Red
 
 ### Pre-requisites:
 -------------------
-    * Redis is installed. 
+    * Redis is installed.
     * MySQL is up and running.
-    * SMTP Server for testing - I use https://nilhcem.github.io/FakeSMTP/ 
+    * SMTP Server for testing - I use (https://nilhcem.github.io/FakeSMTP/)
 
 
 ### Setup
@@ -27,7 +27,7 @@ Use Curl (or POSTman) to run REST APIs to test it.
 
   ## Populate the test data
   ```bash
-  $ curl -X POST "http://localhost:8080/email/testdata?rows=10"
+  $ curl -X POST "http://localhost:8080/email/testdata?rows=500"
   ```
 
   ## Get and view the test data
@@ -38,7 +38,7 @@ Use Curl (or POSTman) to run REST APIs to test it.
 
   ## Trigger emails that are populated above (make sure smtp server is running)
   ```bash
-  $ curl -X PUT "http://localhost:8080/email/trigger?batchSize=300"  
+  $ curl -X PUT "http://localhost:8080/email/trigger"  
 ```
 
   ## Delete all records
@@ -53,3 +53,4 @@ Use Curl (or POSTman) to run REST APIs to test it.
     * Unit testing.
     * Support for NoSQL (pretty easy)
     * Publish the benchmarking.
+    * Pagination/batchSize support.

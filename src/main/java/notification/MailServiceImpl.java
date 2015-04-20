@@ -55,10 +55,11 @@ public class MailServiceImpl {
 	@RequestMapping(method = RequestMethod.PUT, value = "trigger")
 	@Transactional
 	public List<EmailMessage> triggerEmailJob(
-			@RequestParam(value = "batchSize", required = false) int batchSize) {
+			@RequestParam(value = "batchSize", required = false, defaultValue = "300") int batchSize) {
 		Query q = em.createQuery(
 				" from EmailMessage em where em.status = 'NONE'",
 				EmailMessage.class);
+
 		List<EmailMessage> msgList = q.getResultList();
 
 		// Ideally lock the operation, so other load balancing node won't pick
