@@ -22,9 +22,9 @@ commands: # Common commands/tasks
             - run:
                 name: "Generate robots.txt"
                 command: |
-                  \<<-EOF > /tmp/robots.txt
-                  User-agent: *
-                  Allow: /
+                  cat \<<-EOF > /tmp/robots.txt \
+                  User-agent: *  \
+                  Allow: / \
                   EOF
             - store_artifacts:
                 path: /tmp/robots.txt
