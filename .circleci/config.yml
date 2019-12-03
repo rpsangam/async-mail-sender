@@ -12,10 +12,14 @@ commands: # Common commands/tasks
           steps:
             - run:
                 name: "Generate robots.txt"
-                command: echo "PROD" > /tmp/robots.txt
+                command: |
+                  cat \<<-EOF > /tmp/robots.txt 
+                  User-agent: *  
+                  Allow: / 
+                  EOF
             - store_artifacts:
                 path: /tmp/robots.txt
-                destination: robots-stage.txt
+                destination: robots-prod.txt
       - unless: # non-prod deployment
           condition: <<parameters.is_prod>>
           steps:
@@ -24,7 +28,7 @@ commands: # Common commands/tasks
                 command: |
                   cat \<<-EOF > /tmp/robots.txt 
                   User-agent: *  
-                  Allow: / 
+                  Disallow: / 
                   EOF
             - store_artifacts:
                 path: /tmp/robots.txt
