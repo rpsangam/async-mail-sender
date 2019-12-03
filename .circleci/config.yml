@@ -1,26 +1,44 @@
-#
-# Check https://circleci.com/docs/2.0/language-java/ for more details
-#
-version: 2
-jobs:
-  build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/openjdk:8-jdk
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-    working_directory: ~/repo
-
-    environment:
-      # Customize the JVM maximum heap limit
-      JVM_OPTS: -Xmx3200m
-      TERM: dumb
+version: 2.1
+commands: # Common commands/tasks
+  gen_robots: # Generates robots.txt file for prod and non-prod deployment.
+    parameters:
+      is_prod:
+        type: boolean
+        default: false
 
     steps:
-      - checkout
-      - run: echo "Build OK"
-      
+      - when: # prod deployment
+          condition: <<parameters.is_prod>>
+          steps:
+            - run:
+                name: "Generate robots.txt"
+                command: |
+                  mv robots.txt robots.txt.bak
+                  \<<-EOF > robots.txt
+                  User-agent: *
+                  Disallow: /
+                  EOF
+
+      - unless: # non-prod deployment
+          condition: <<parameters.is_prod>>
+          steps:
+            - run:
+                name: "Generate robots.txt"
+                command: |
+                  mv robots.txt robots.txt.bak
+                  \<<-EOF > robots.txt
+                  User-agent: *
+                  Allow: /
+                  EOF
+
+jobs: #
+  build:
+    docker:
+      - image: circleci/node:4.8.2
+    steps:
+      - gen_robots:
+          is_prod: true
+      - run: cat "robots.txt"
+      - gen_robots:
+          is_prod: false
+      - run: cat "robots.txt"
