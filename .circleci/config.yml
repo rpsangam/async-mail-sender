@@ -12,11 +12,7 @@ commands: # Common commands/tasks
           steps:
             - run:
                 name: "Generate robots.txt"
-                command: |
-                  \<<-EOF > /tmp/robots.txt
-                  User-agent: *
-                  Disallow: /
-                  EOF
+                command: echo "PROD" > /tmp/robots.txt
             - store_artifacts:
                 path: /tmp/robots.txt
                 destination: robots-stage.txt
