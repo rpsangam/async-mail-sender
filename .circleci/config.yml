@@ -13,8 +13,7 @@ commands: # Common commands/tasks
             - run:
                 name: "Generate robots.txt"
                 command: |
-                  mv robots.txt robots.txt.bak > /dev/null 2>&1  || echo "Generating file"
-                  \<<-EOF > robots.txt
+                  \<<-EOF > /tmp/robots.txt
                   User-agent: *
                   Disallow: /
                   EOF
@@ -25,11 +24,12 @@ commands: # Common commands/tasks
             - run:
                 name: "Generate robots.txt"
                 command: |
-                  mv robots.txt robots.txt.bak  > /dev/null 2>&1  || echo "Generating file"
-                  \<<-EOF > robots.txt
+                  \<<-EOF > /tmp/robots.txt
                   User-agent: *
                   Allow: /
                   EOF
+      - store_artifacts:
+          path: /tmp/robots.txt
 
 jobs: #
   build:
@@ -38,7 +38,6 @@ jobs: #
     steps:
       - gen_robots:
           is_prod: true
-      - run: cat "robots.txt"
       - gen_robots:
           is_prod: false
-      - run: cat "robots.txt"
+
