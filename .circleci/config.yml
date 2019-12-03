@@ -18,7 +18,8 @@ commands: # Common commands/tasks
                   Disallow: /
                   EOF
             - store_artifacts:
-                path: /tmp/robots-prod.txt
+                path: /tmp/robots.txt
+                destination: robots-stage.txt
       - unless: # non-prod deployment
           condition: <<parameters.is_prod>>
           steps:
@@ -30,7 +31,8 @@ commands: # Common commands/tasks
                   Allow: /
                   EOF
             - store_artifacts:
-                path: /tmp/robots-stage.txt
+                path: /tmp/robots.txt
+                destination: robots-stage.txt
 
 jobs: #
   build:
