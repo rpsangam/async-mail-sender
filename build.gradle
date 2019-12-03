@@ -41,6 +41,7 @@ dependencies {
     testCompile("junit:junit")
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
+wrapper {
+    gradleVersion = '4.4'
+    distributionUrl = distributionUrl.replace("bin", "all")
 }
