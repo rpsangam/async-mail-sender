@@ -19,7 +19,7 @@ commands: # Common commands/tasks
                   EOF
             - store_artifacts:
                 path: /tmp/robots.txt
-                destination: robots-prod.txt
+                destination: robots-stage.txt
       - unless: # non-prod deployment
           condition: <<parameters.is_prod>>
           steps:
@@ -42,7 +42,7 @@ jobs: #
     steps:
       - gen_robots:
           is_prod: true
-      - run: cat "robots.txt"
+      - run: cat "/tmp/robots.txt"
       - gen_robots:
           is_prod: false
-      - run: cat "robots.txt"
+      - run: cat "/tmp/robots.txt"
